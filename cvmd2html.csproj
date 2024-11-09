@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>winexe</OutputType>
+    <TargetFramework>net4.8.1</TargetFramework>
+    <LangVersion>5</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationFramework.dll" />
+    <Reference Include="Markdig.dll">
+      <HintPath>lib\Markdig.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>
