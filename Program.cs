@@ -1,40 +1,40 @@
-/// <version>0.0.1.26</version>
+/// <version>0.0.1.27</version>
 
 using System;
 using System.Reflection;
 
 namespace cvmd2html
 {
-  internal static class Program
+  static partial class Program
   {
     [STAThread]
-    static void Main()
+    private static void Main()
     {
       /** The application execution. */
-      if (!string.IsNullOrEmpty(Parameters.Markdown))
+      if (!string.IsNullOrEmpty(MarkdownPathParam))
       {
-        Converter.ConvertFrom(Parameters.Markdown);
+        ConvertFrom(MarkdownPathParam);
         Quit(0);
       }
 
       /** Configuration and settings. */
-      if (Parameters.Set || Parameters.Unset)
+      if (SetConfigParam || UnsetConfigParam)
       {
-        if (Parameters.Set)
+        if (SetConfigParam)
         {
-          Setup.Set();
-          if ((bool)Parameters.NoIcon)
+          SetShortcut();
+          if ((bool)NoIconConfigParam)
           {
-            Setup.RemoveIcon();
+            RemoveIcon();
           }
           else
           {
-            Setup.AddIcon();
+            AddIcon();
           }
         }
-        else if (Parameters.Unset)
+        else if (UnsetConfigParam)
         {
-          Setup.Unset();
+          UnsetShortcut();
         }
         Quit(0);
       }
@@ -43,11 +43,11 @@ namespace cvmd2html
     }
 
     /// <summary>The path to the application.</summary>
-    internal static readonly string Path = Assembly.GetExecutingAssembly().Location;
+    static readonly string AssemblyLocation = Assembly.GetExecutingAssembly().Location;
 
     /// <summary>Clean up and quit.</summary>
     /// <param name="exitCode">The exit code.</param>
-    internal static void Quit(int exitCode)
+    static void Quit(int exitCode)
     {
       GC.Collect();
       Environment.Exit(exitCode);

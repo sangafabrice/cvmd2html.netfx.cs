@@ -1,5 +1,5 @@
 /// <summary>The parsed parameters.</summary>
-/// <version>0.0.1.6</version>
+/// <version>0.0.1.7</version>
 
 using System;
 using System.Dynamic;
@@ -7,24 +7,24 @@ using System.Text;
 
 namespace cvmd2html
 {
-  internal static class Parameters
+  static partial class Program
   {
     /// <summary>The parameter object.</summary>
-    static readonly dynamic _param = ParseCommandLine(Environment.GetCommandLineArgs());
+    private static readonly dynamic _param = ParseCommandLine(Environment.GetCommandLineArgs());
 
     /// <summary>The input markdown path.</summary>
-    internal static readonly string Markdown = _param.Markdown;
+    static readonly string MarkdownPathParam = _param.Markdown;
 
     /// <summary>Specify to configure the shortcut in the registry.</summary>
-    internal static readonly bool Set = _param.Set;
+    static readonly bool SetConfigParam = _param.Set;
 
     /// <summary>Specify to remove the shortcut menu.</summary>
-    internal static readonly bool Unset = _param.Unset;
+    static readonly bool UnsetConfigParam = _param.Unset;
 
     /// <summary>Specify to configure the shortcut without the icon.</summary>
-    internal static readonly Nullable<bool> NoIcon = _param.NoIcon;
+    static readonly Nullable<bool> NoIconConfigParam = _param.NoIcon;
 
-    static dynamic ParseCommandLine(string[] args)
+    private static dynamic ParseCommandLine(string[] args)
     {
       dynamic paramExpando = new ExpandoObject();
       paramExpando.Markdown = null;
@@ -69,7 +69,7 @@ namespace cvmd2html
       return null;
     }
 
-    static void ShowHelp()
+    private static void ShowHelp()
     {
       var helpTextBuilder = new StringBuilder();
       helpTextBuilder.AppendLine("The MarkdownToHtml shortcut launcher.");
@@ -86,7 +86,7 @@ namespace cvmd2html
       helpTextBuilder.AppendLine("              NoIcon  Specifies that the icon is not configured.");
       helpTextBuilder.AppendLine("               Unset  Removes the shortcut menu.");
       helpTextBuilder.AppendLine("                Help  Show the help doc.");
-      MessageBox.Show(helpTextBuilder.ToString(), MessageBox.HELP);
+      Popup(helpTextBuilder.ToString(), HELP);
     }
   }
 }
