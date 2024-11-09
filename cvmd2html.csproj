@@ -1,13 +1,30 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <OutputType>winexe</OutputType>
+    <AssemblyName>cvmd2html</AssemblyName>
+    <OutputType Condition=" '$(OutputType)' == '' ">WinExe</OutputType>
     <TargetFramework>net4.8.1</TargetFramework>
     <LangVersion>5</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PresentationFramework.dll" />
-    <Reference Include="Markdig.dll">
-      <HintPath>lib\Markdig.dll</HintPath>
+    <Compile Include="Program.cs" />
+    <Compile Include="src\*.cs" Exclude="src\Resource.cs" />
+    <Reference Include="System.Xaml.dll;System.Numerics.dll" />
+    <Reference Include="PresentationFramework.dll;PresentationCore.dll;WindowsBase.dll">
+      <HintPath>$([System.IO.Path]::Combine($(MSBuildToolsPath), 'WPF'))\</HintPath>
+    </Reference>
+    <Reference Include="lib\*.dll">
+      <Private>true</Private>
     </Reference>
   </ItemGroup>
+  <Target Name="Build">
+    <PropertyGroup>
+      <OutputPath>bin</OutputPath>
+      <OutputAssembly>$([System.IO.Path]::Combine($(OutputPath), '$(AssemblyName).exe'))</OutputAssembly>
+    </PropertyGroup>
+    <RemoveDir Directories="$(OutputPath)" Condition="Exists('$(OutputPath)')" />
+    <MakeDir Directories="$(OutputPath)" />
+    <Copy SourceFiles="@(Reference)" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" Condition=" %(Reference.Private) == 'true' " />
+    <Csc OutputAssembly="$(OutputAssembly)" Sources="@(Compile)" References="@(Reference->'%(HintPath)%(Identity)')" Win32Icon="menu.ico" Optimize="true" />
+    <Copy SourceFiles="App.config" DestinationFiles="$(OutputAssembly).config" SkipUnchangedFiles="true" />
+  </Target>
 </Project>
