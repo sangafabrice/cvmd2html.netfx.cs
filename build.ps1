@@ -1,4 +1,4 @@
-<#PSScriptInfo .VERSION 0.0.1.10#>
+<#PSScriptInfo .VERSION 0.0.1.11#>
 
 [CmdletBinding()]
 Param ()
@@ -43,10 +43,15 @@ Start-Job {
     'System.Xaml.dll','System.Numerics.dll'
     'Microsoft.CSharp.dll','System.dll','System.Core.dll'
   ))
-  Add-Type -Path @(Get-Item "$ScriptRoot\src\*.cs","$ScriptRoot\Program.cs" -Exclude 'Resource.cs').FullName -CompilerParameters $CompilerParams -WarningAction SilentlyContinue
+  $Results = [Microsoft.CSharp.CSharpCodeProvider]::new().CompileAssemblyFromFile($CompilerParams, [string[]](Get-Item "$ScriptRoot\src\*.cs","$ScriptRoot\Program.cs" -Exclude 'Resource.cs').FullName)
 
-  If (0 -eq $Error.Count) {
+  If ($Results.Errors.Count -eq 0 -and 0 -eq $Error.Count) {
     Write-Host "Output file $ConvertExe written." @HostColorArgs
     (Get-Item $ConvertExe).VersionInfo | Format-List * -Force
+  } ElseIf ($Results.Errors.Count -ne 0) {
+    $HostColorArgs.BackgroundColor = 'Red'
+    ForEach ($ErrResult in $Results.Errors) {
+      Write-Host ('Error {1}: {2}' -f $ErrResult.ErrorNumber,$ErrResult.ErrorText) @HostColorArgs
+    }
   }
 } -ArgumentList $DebugPreference -PSVersion 5.1 | Receive-Job -Wait -AutoRemoveJob
